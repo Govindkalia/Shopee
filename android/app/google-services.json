@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "559792862940",
+    "project_id": "benchpoc-8385f",
+    "storage_bucket": "benchpoc-8385f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:559792862940:android:5a00d9b5684a18de5da619",
+        "android_client_info": {
+          "package_name": "com.shopee"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCjPw60QRGmCHJgF2CgnBIs_gjt9j8kohU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
