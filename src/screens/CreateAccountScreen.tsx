@@ -1126,7 +1126,10 @@ const CreateAccountScreen: React.FC<Props> = ({navigation}) => {
           phone: false,
           name: false,
         });
-        navigation.navigate('Onboarding');
+        navigation.reset({
+          index: 0,
+          routes: [{name: 'AuthLoading'}],
+        });
       } else {
         Alert.alert('Error', 'Account created but failed to save profile data');
       }

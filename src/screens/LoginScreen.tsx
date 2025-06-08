@@ -1651,6 +1651,10 @@ const LoginScreen: React.FC<Props> = ({navigation}) => {
       if (result.success) {
         Alert.alert('Success', 'You are now logged in!');
         setIsWrongPassword(false);
+        navigation.reset({
+          index: 0,
+          routes: [{name: 'AuthLoading'}],
+        });
       } else {
         const msg = getErrorMessageFromCode(
           result.errorCode || 'auth/invalid-credential',
@@ -1672,7 +1676,7 @@ const LoginScreen: React.FC<Props> = ({navigation}) => {
   };
 
   const handleForgotPassword = () => {
-    navigation.navigate('PasswordRecoveryScreen');
+    navigation.navigate('PasswordRecoveryScreen', {email});
   };
 
   const handleCancel = () => {

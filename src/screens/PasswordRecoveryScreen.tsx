@@ -201,6 +201,7 @@
 //   },
 // });
 
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useState} from 'react';
 import {
   View,
@@ -212,11 +213,18 @@ import {
   Dimensions,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
+import {RootStackParamList} from '../../App';
+
+type Props = NativeStackScreenProps<
+  RootStackParamList,
+  'PasswordRecoveryScreen'
+>;
 
 // Get screen dimensions
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 
-const PasswordRecoveryScreen = ({navigation}: any) => {
+const PasswordRecoveryScreen: React.FC<Props> = ({navigation, route}) => {
+  const {email} = route.params || {};
   const [selectedOption, setSelectedOption] = useState<'SMS' | 'Email'>('SMS');
 
   const handleOptionSelect = (option: 'SMS' | 'Email') => {
@@ -227,7 +235,7 @@ const PasswordRecoveryScreen = ({navigation}: any) => {
     if (selectedOption === 'SMS') {
       navigation.navigate('PasswordRecoveryScreenByPhone');
     } else {
-      navigation.navigate('PasswordRecoveryScreenByEmail');
+      navigation.navigate('PasswordRecoveryScreenByEmail', {email});
     }
   };
 
