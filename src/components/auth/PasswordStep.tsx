@@ -1255,6 +1255,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   charBox: {
+    textAlign: 'center',
     width: 12,
     height: 42,
     marginHorizontal: 2,

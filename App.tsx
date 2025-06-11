@@ -12,20 +12,37 @@ import PasswordRecoveryScreenByPhone from './src/screens/passwordRecoveryScreenB
 import PasswordRecoveryScreenByEmail from './src/screens/PasswordRecoveryScreenByEmail';
 import SetupNewPasswordScreen from './src/screens/SetupNewPasswordScreen';
 import OnboardingScreen from './src/screens/OnboardingScreen';
+import Home from './src/screens/Home';
+import AuthLoadingScreen from './src/screens/AuthLoadingScreen';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+// import {Icon} from 'react-native-vector-icons/Icon';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
+import Profile from './src/screens/ProfileScreen';
+import Wishlist from './src/screens/WishlistScreen';
+import Cart from './src/screens/CartScreen';
 // import Home from './src/screens/Home';
 
 export type RootStackParamList = {
+  AuthLoading: undefined;
   Start: undefined;
   Signup: undefined;
   Login: undefined;
-  PasswordRecoveryScreen: undefined;
+  PasswordRecoveryScreen: {email: string};
   TermsOfService: undefined;
   PrivacyPolicy: undefined;
   PasswordRecoveryScreenByPhone: {phoneNumber?: string} | undefined;
   SetupNewPasswordScreen: undefined;
-  PasswordRecoveryScreenByEmail: undefined;
-  Home: undefined;
+  PasswordRecoveryScreenByEmail: {email: string};
+  MainTabs: undefined;
   Onboarding: undefined;
+};
+
+export type TabParamList = {
+  Home: undefined;
+  Wishlist: undefined;
+  Cart: undefined;
+  Profile: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -41,12 +58,59 @@ function App(): React.JSX.Element {
     return () => clearTimeout(timeout);
   }, []);
 
+  const Tab = createBottomTabNavigator();
+
+  function MainTabs() {
+    return (
+      <Tab.Navigator screenOptions={{headerShown: false}}>
+        <Tab.Screen
+          name="Home"
+          component={Home}
+          options={{
+            tabBarIcon: ({color, size}) => (
+              <Ionicons name="home-outline" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Wishlist"
+          component={Wishlist}
+          options={{
+            tabBarIcon: ({color, size}) => (
+              <Ionicons name="heart-outline" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Cart"
+          component={Cart}
+          options={{
+            tabBarIcon: ({color, size}) => (
+              <Ionicons name="cart-outline" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Profile"
+          component={Profile}
+          options={{
+            tabBarIcon: ({color, size}) => (
+              <Ionicons name="person-outline" size={size} color={color} />
+            ),
+          }}
+        />
+      </Tab.Navigator>
+    );
+  }
+
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Start"
+        initialRouteName="AuthLoading"
         screenOptions={{headerShown: false}}>
+        <Stack.Screen name="AuthLoading" component={AuthLoadingScreen} />
         <Stack.Screen name="Start" component={StartScreen} />
+
         <Stack.Screen name="Signup" component={CreateAccountScreen} />
         <Stack.Screen name="TermsOfService" component={TermsOfService} />
         <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
@@ -68,7 +132,7 @@ function App(): React.JSX.Element {
           component={SetupNewPasswordScreen}
         />
         <Stack.Screen name="Onboarding" component={OnboardingScreen} />
-        {/* <Stack.Screen name="Home" component={Home} /> */}
+        <Stack.Screen name="MainTabs" component={MainTabs} />
       </Stack.Navigator>
     </NavigationContainer>
   );
