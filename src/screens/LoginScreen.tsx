@@ -1649,7 +1649,7 @@ const LoginScreen: React.FC<Props> = ({navigation}) => {
     try {
       const result = await loginWithEmailAndPassword(email, password);
       if (result.success) {
-        Alert.alert('Success', 'You are now logged in!');
+        // Alert.alert('Success', 'You are now logged in!');
         setIsWrongPassword(false);
         navigation.reset({
           index: 0,

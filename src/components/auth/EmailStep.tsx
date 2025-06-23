@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   input: {
-    backgroundColor: '#F6F6F6',
+    backgroundColor: '#FAF4F4',
     borderRadius: 12,
     padding: 16,
     fontSize: 16,
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   cancelText: {
-    color: '#316bff',
+    color:' #202020',
     fontSize: 16,
   },
 });

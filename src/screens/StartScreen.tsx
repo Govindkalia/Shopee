@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     paddingVertical: 18,
     paddingHorizontal: 32,
     borderRadius: 10,
-    marginTop: 180,
+    marginTop: 200,
     width: '85%',
     alignItems: 'center',
   },
@@ -121,8 +121,8 @@ const styles = StyleSheet.create({
   footer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 10,
     gap: 10,
+    marginBottom:30,
   },
 
   footerText: {

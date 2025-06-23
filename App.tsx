@@ -15,13 +15,12 @@ import OnboardingScreen from './src/screens/OnboardingScreen';
 import Home from './src/screens/Home';
 import AuthLoadingScreen from './src/screens/AuthLoadingScreen';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-// import {Icon} from 'react-native-vector-icons/Icon';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
 import Profile from './src/screens/ProfileScreen';
 import Wishlist from './src/screens/WishlistScreen';
 import Cart from './src/screens/CartScreen';
-// import Home from './src/screens/Home';
+import { Provider } from 'react-redux';
+import { store } from './src/store';
 
 export type RootStackParamList = {
   AuthLoading: undefined;
@@ -104,6 +103,7 @@ function App(): React.JSX.Element {
   }
 
   return (
+    <Provider store={store}>
     <NavigationContainer>
       <Stack.Navigator
         initialRouteName="AuthLoading"
@@ -133,8 +133,10 @@ function App(): React.JSX.Element {
         />
         <Stack.Screen name="Onboarding" component={OnboardingScreen} />
         <Stack.Screen name="MainTabs" component={MainTabs} />
+        
       </Stack.Navigator>
     </NavigationContainer>
+    </Provider>
   );
 }
 
