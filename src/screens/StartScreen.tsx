@@ -18,11 +18,11 @@ const StartScreen: React.FC<Props> = ({navigation}) => {
   return (
     <>
       <View style={styles.container}>
-        <StatusBar
+        {/* <StatusBar
           translucent
           backgroundColor="transparent"
           barStyle="dark-content"
-        />
+        /> */}
         <View style={styles.headerContainer}>
           <View style={styles.logoWrapper}>
             <Image
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    marginBottom:30,
+    marginBottom: 30,
   },
 
   footerText: {
