@@ -49,12 +49,16 @@ const AuthLoadingScreen: React.FC<Props> = ({navigation}) => {
   useEffect(() => {
     const checkAuthAndOnboarding = async () => {
       const user = auth().currentUser;
-      const onboardingShown = await AsyncStorage.getItem('onboardingShown');
+      // const onboardingShown = await AsyncStorage.getItem('onboardingShown');
+      
       console.log('AuthLoadingScreen checking user...');
       console.log('User:', user);
-      console.log('onboardingShown:', onboardingShown);
+      // console.log('onboardingShown:', onboardingShown);
 
       if (user) {
+        const onboardingShown = await AsyncStorage.getItem(`onboardingShown_${user.uid}`);
+        console.log('onboardingShown:', onboardingShown);
+        console.log(`onboardingShown_${user.uid}`);
         if (onboardingShown === 'true') {
           navigation.replace('MainTabs');
         } else {

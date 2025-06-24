@@ -302,7 +302,7 @@ const PasswordRecoveryScreen: React.FC<Props> = ({navigation, route}) => {
             style={[
               styles.optionText,
               selectedOption === 'Email' && {
-                color: '#eb7c7c',
+                color: '#F36CA6',
                 fontWeight: 'bold',
               },
             ]}>
@@ -313,7 +313,7 @@ const PasswordRecoveryScreen: React.FC<Props> = ({navigation, route}) => {
               styles.radio,
               selectedOption === 'Email' && {
                 borderColor: '#faf7f7',
-                backgroundColor: '#eb7c7c',
+                backgroundColor: '#F36CA6',
               },
             ]}>
             {selectedOption === 'Email' && (
@@ -407,7 +407,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#e5edff',
   },
   selectedEmail: {
-    backgroundColor: '#ffe5e5',
+    backgroundColor: '#FDE8F1',
   },
   optionText: {
     fontSize: 16,
@@ -448,7 +448,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   cancelText: {
-    color: '#999',
+    color: '#202020',
     fontSize: 14,
     marginTop: 16,
   },

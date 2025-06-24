@@ -1589,6 +1589,7 @@ import {
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../App';
 import {getUserByEmail} from '../utils/firestore-utils';
+import Toast from 'react-native-root-toast';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
@@ -1637,29 +1638,70 @@ const LoginScreen: React.FC<Props> = ({navigation}) => {
     }
   };
 
+  // const handleLogin = async () => {
+  //   setPasswordError('');
+
+  //   if (!validatePassword(password)) {
+  //     setPasswordError('Password must be at least 6 characters');
+  //     return;
+  //   }
+
+  //   setLoading(true);
+  //   try {
+  //     const result = await loginWithEmailAndPassword(email, password);
+  //     if (result.success) {
+  //       // Alert.alert('Success', 'You are now logged in!');
+  //       setIsWrongPassword(false);
+  //       navigation.reset({
+  //         index: 0,
+  //         routes: [{name: 'AuthLoading'}],
+  //       });
+  //     } else {
+  //       const msg = getErrorMessageFromCode(
+  //         result.errorCode || 'auth/invalid-credential',
+  //       );
+  //       setPasswordError(msg);
+  //       setIsWrongPassword(true);
+  //       setPassword('');
+  //     }
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const handleLogin = async () => {
-    setPasswordError('');
-
-    if (!validatePassword(password)) {
-      setPasswordError('Password must be at least 6 characters');
-      return;
-    }
-
-    setLoading(true);
     try {
       const result = await loginWithEmailAndPassword(email, password);
+
       if (result.success) {
-        Alert.alert('Success', 'You are now logged in!');
         setIsWrongPassword(false);
-        navigation.reset({
-          index: 0,
-          routes: [{name: 'AuthLoading'}],
+
+        // Show success toast
+        Toast.show('Login Successful! 🎉', {
+          duration: Toast.durations.SHORT,
+          position: Toast.positions.BOTTOM,
+          shadow: true,
+          animation: true,
+          hideOnPress: true,
+          delay: 0,
         });
+
+        // Delay navigation to allow toast to show
+        setTimeout(() => {
+          navigation.reset({
+            index: 0,
+            routes: [{name: 'AuthLoading'}],
+          });
+        }, 8000); // 1 second delay
       } else {
-        const msg = getErrorMessageFromCode(
-          result.errorCode || 'auth/invalid-credential',
-        );
-        setPasswordError(msg);
+        // Show error toast
+        Toast.show('Invalid credentials. Please try again.', {
+          duration: Toast.durations.LONG,
+          position: Toast.positions.BOTTOM,
+          backgroundColor: 'red',
+          textColor: 'white',
+        });
+
         setIsWrongPassword(true);
         setPassword('');
       }

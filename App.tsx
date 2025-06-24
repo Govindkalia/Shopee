@@ -15,13 +15,14 @@ import OnboardingScreen from './src/screens/OnboardingScreen';
 import Home from './src/screens/Home';
 import AuthLoadingScreen from './src/screens/AuthLoadingScreen';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-// import {Icon} from 'react-native-vector-icons/Icon';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
 import Profile from './src/screens/ProfileScreen';
 import Wishlist from './src/screens/WishlistScreen';
 import Cart from './src/screens/CartScreen';
-// import Home from './src/screens/Home';
+import {Provider} from 'react-redux';
+import {store} from './src/store';
+import {StatusBar} from 'react-native';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 export type RootStackParamList = {
   AuthLoading: undefined;
@@ -62,7 +63,12 @@ function App(): React.JSX.Element {
 
   function MainTabs() {
     return (
-      <Tab.Navigator screenOptions={{headerShown: false}}>
+      <Tab.Navigator
+        screenOptions={{
+          headerShown: false,
+          tabBarActiveTintColor: '#191919',
+          tabBarInactiveTintColor: '#316bff',
+        }}>
         <Tab.Screen
           name="Home"
           component={Home}
@@ -104,37 +110,46 @@ function App(): React.JSX.Element {
   }
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="AuthLoading"
-        screenOptions={{headerShown: false}}>
-        <Stack.Screen name="AuthLoading" component={AuthLoadingScreen} />
-        <Stack.Screen name="Start" component={StartScreen} />
+    <SafeAreaProvider>
+      <Provider store={store}>
+        <StatusBar
+          translucent
+          backgroundColor="transparent"
+          barStyle="dark-content"
+        />
+        <NavigationContainer>
+          <Stack.Navigator
+            initialRouteName="AuthLoading"
+            screenOptions={{headerShown: false}}>
+            <Stack.Screen name="AuthLoading" component={AuthLoadingScreen} />
+            <Stack.Screen name="Start" component={StartScreen} />
 
-        <Stack.Screen name="Signup" component={CreateAccountScreen} />
-        <Stack.Screen name="TermsOfService" component={TermsOfService} />
-        <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen
-          name="PasswordRecoveryScreen"
-          component={PasswordRecoveryScreen}
-        />
-        <Stack.Screen
-          name="PasswordRecoveryScreenByPhone"
-          component={PasswordRecoveryScreenByPhone}
-        />
-        <Stack.Screen
-          name="PasswordRecoveryScreenByEmail"
-          component={PasswordRecoveryScreenByEmail}
-        />
-        <Stack.Screen
-          name="SetupNewPasswordScreen"
-          component={SetupNewPasswordScreen}
-        />
-        <Stack.Screen name="Onboarding" component={OnboardingScreen} />
-        <Stack.Screen name="MainTabs" component={MainTabs} />
-      </Stack.Navigator>
-    </NavigationContainer>
+            <Stack.Screen name="Signup" component={CreateAccountScreen} />
+            <Stack.Screen name="TermsOfService" component={TermsOfService} />
+            <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen
+              name="PasswordRecoveryScreen"
+              component={PasswordRecoveryScreen}
+            />
+            <Stack.Screen
+              name="PasswordRecoveryScreenByPhone"
+              component={PasswordRecoveryScreenByPhone}
+            />
+            <Stack.Screen
+              name="PasswordRecoveryScreenByEmail"
+              component={PasswordRecoveryScreenByEmail}
+            />
+            <Stack.Screen
+              name="SetupNewPasswordScreen"
+              component={SetupNewPasswordScreen}
+            />
+            <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+            <Stack.Screen name="MainTabs" component={MainTabs} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </Provider>
+    </SafeAreaProvider>
   );
 }
 

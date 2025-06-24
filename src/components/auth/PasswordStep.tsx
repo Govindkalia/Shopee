@@ -1177,7 +1177,7 @@ const PasswordStep: React.FC<PasswordStepProps> = ({
       <View style={styles.notYouContainer}>
         <Text style={styles.notYouText}>Not you?</Text>
         <TouchableOpacity style={styles.notYouButton} onPress={onNotYou}>
-          <Icon name="arrow-left" size={16} color="#fff" />
+          <Icon name="arrow-right" size={16} color="#fff" />
         </TouchableOpacity>
       </View>
 
@@ -1195,6 +1195,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 24,
     justifyContent: 'space-between',
+
   },
   profileContainer: {
     alignItems: 'center',
@@ -1244,7 +1245,7 @@ const styles = StyleSheet.create({
   boxWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F6F6F6',
+    backgroundColor: '#FAF4F4',
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 12,

@@ -713,6 +713,7 @@ import {
   parsePhoneNumberFromString,
   isValidPhoneNumber,
 } from 'libphonenumber-js';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Signup'>;
 
@@ -1178,7 +1179,7 @@ const CreateAccountScreen: React.FC<Props> = ({navigation}) => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Image
         source={require('../assets/Bubbles.png')}
         style={styles.backgroundImage}
@@ -1188,7 +1189,8 @@ const CreateAccountScreen: React.FC<Props> = ({navigation}) => {
       <KeyboardAvoidingView
         style={styles.keyboardAvoidingView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+        >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <ScrollView
             contentContainerStyle={[
@@ -1199,6 +1201,7 @@ const CreateAccountScreen: React.FC<Props> = ({navigation}) => {
             bounces={false}
             keyboardShouldPersistTaps="handled">
             <View style={styles.formcontainer}>
+            
               <Text style={styles.title}>Create{'\n'}Account</Text>
 
               <View style={{width: '100%', alignItems: 'flex-start'}}>
@@ -1383,10 +1386,11 @@ const CreateAccountScreen: React.FC<Props> = ({navigation}) => {
                 </Text>
               </View>
             </View>
+           
           </ScrollView>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -1395,6 +1399,9 @@ export default CreateAccountScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fff',
+    position:'relative',
+    zIndex: 0,
   },
   backgroundImage: {
     position: 'absolute',
@@ -1403,24 +1410,23 @@ const styles = StyleSheet.create({
     zIndex: -1,
   },
   scrollContainerKeyboard: {
-    paddingBottom: 200,
+    // paddingBottom: 200,
   },
   keyboardAvoidingView: {
     flex: 1,
   },
   scrollContainer: {
     flexGrow: 1,
-    minHeight: screenHeight,
+    // minHeight: screenHeight,
   },
   formcontainer: {
-    backgroundColor: 'transparent',
+    backgroundColor:'transparent',
     flexGrow: 1,
-    padding: 14,
-    //alignItems: 'center',
+    padding:14,
     justifyContent: 'flex-start',
-    minHeight: screenHeight - 100,
-    //backgroundColor: '#fff',
+    // minHeight: screenHeight - 140,
   },
+  
   title: {
     fontSize: 36,
     fontWeight: 'bold',
@@ -1453,10 +1459,10 @@ const styles = StyleSheet.create({
   },
   input: {
     width: '100%',
-    backgroundColor: '#F6F6F6',
+    backgroundColor: '#FAF4F4',
     borderRadius: 18,
     padding: 14,
-    fontSize: 16,
+    fontSize: 14,
   },
   inputError: {
     borderWidth: 1,
@@ -1472,23 +1478,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
-    backgroundColor: '#F6F6F6',
+    backgroundColor: '#FAF4F4',
     borderRadius: 18,
     paddingHorizontal: 14,
   },
   passwordInput: {
     flex: 1,
     paddingVertical: 14,
-    fontSize: 16,
+    fontSize: 14,
   },
 
   phoneContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F6F6F6',
+    backgroundColor: '#FAF4F4',
     borderRadius: 18,
     height: 50,
     overflow: 'hidden',
+  
   },
   pickerNative: {
     width: 140,
@@ -1499,12 +1506,12 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 1,
     paddingVertical: 1,
-    fontSize: 16,
+    fontSize: 14,
   },
 
   strengthContainer: {
-    marginTop: 12,
-    width: '100%',
+    margin: 12,
+    width: '93%',
   },
   strengthLabel: {
     fontWeight: 'bold',
@@ -1514,7 +1521,7 @@ const styles = StyleSheet.create({
   strengthValue: {
     fontSize: 12,
     fontWeight: 'bold',
-    marginLeft: 4,
+   // marginLeft: 4,
   },
   strengthBar: {
     height: 4,
@@ -1545,13 +1552,13 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   cancelText: {
-    color: '#3A5BFF',
+    color: '#202020',
     fontSize: 16,
     fontWeight: '500',
     textAlign: 'center',
   },
   termsContainer: {
-    marginTop: 10,
+    marginTop: 30,
     paddingHorizontal: 20,
   },
   termsText: {

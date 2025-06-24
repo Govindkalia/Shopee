@@ -1045,7 +1045,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   cancelText: {
-    color: '#666',
+    color: '#202020',
     fontSize: 16,
   },
   successContainer: {
