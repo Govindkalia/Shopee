@@ -18,8 +18,16 @@ import {fetchCategories} from '../store/slices/categoriesSlice';
 import {AppDispatch, RootState} from '../store';
 import {useNavigation} from '@react-navigation/native';
 import Swiper from 'react-native-swiper';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RootStackParamList} from '../../App';
 
 const screenWidth = Dimensions.get('window').width;
+
+type NavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'CategoryPLP'
+>;
+
 type Product = {
   id: string;
   name: string;
@@ -37,7 +45,7 @@ type CategorySummary = {
 };
 
 const Home = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
@@ -73,8 +81,11 @@ const Home = () => {
     </View>
   );
 
-  const renderCategory = (cat: any, index: number) => (
-    <TouchableOpacity key={`${cat.name}-${index}`} style={styles.categoryCard}>
+  const renderCategory = (cat: CategorySummary, index: number) => (
+    <TouchableOpacity
+      key={`${cat.name}-${index}`}
+      style={styles.categoryCard}
+      onPress={() => navigation.navigate('CategoryPLP', {category: cat.name})}>
       <View style={styles.imageGrid}>
         {cat.images.map((img: string, i: number) => (
           <Image key={i} source={{uri: img}} style={styles.gridImage} />
@@ -107,11 +118,6 @@ const Home = () => {
               />
             </TouchableOpacity>
           </View>
-
-          {/* <View style={styles.headerIcons}>
-            <Text style={styles.icon}></Text>
-            <Text style={styles.icon}></Text>
-          </View> */}
         </View>
 
         <View style={styles.bannerContainer}>
@@ -137,7 +143,7 @@ const Home = () => {
 
         {/* Categories */}
         <Section title="Categories">
-          <View key={screenWidth} style={styles.categoryGrid}>
+          <View style={styles.categoryGrid}>
             {categorySummaries.map(renderCategory)}
           </View>
         </Section>
@@ -390,7 +396,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginTop: 10,
+    marginTop: 11,
   },
   categoryCard: {
     width: screenWidth / 2 - 24,

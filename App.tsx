@@ -23,6 +23,7 @@ import {Provider} from 'react-redux';
 import {store} from './src/store';
 import {StatusBar} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
+import CategoryPLPScreen from './src/screens/CategoryPLPScreen';
 
 export type RootStackParamList = {
   AuthLoading: undefined;
@@ -37,6 +38,7 @@ export type RootStackParamList = {
   PasswordRecoveryScreenByEmail: {email: string};
   MainTabs: undefined;
   Onboarding: undefined;
+  CategoryPLP: {category: string};
 };
 
 export type TabParamList = {
@@ -146,6 +148,7 @@ function App(): React.JSX.Element {
             />
             <Stack.Screen name="Onboarding" component={OnboardingScreen} />
             <Stack.Screen name="MainTabs" component={MainTabs} />
+            <Stack.Screen name="CategoryPLP" component={CategoryPLPScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>
