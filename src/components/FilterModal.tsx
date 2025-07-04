@@ -27,6 +27,7 @@ type FilterModalProps = {
     sortBy: 'popular' | 'newest' | 'priceLowToHigh' | 'priceHighToLow';
   };
   onApplyFilters: (filters: FilterModalProps['currentFilters']) => void;
+  category: string;
 };
 
 const FilterModal: React.FC<FilterModalProps> = ({
@@ -37,6 +38,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
   availableSizes,
   currentFilters,
   onApplyFilters,
+  category,
 }) => {
   const [selectedBrands, setSelectedBrands] = useState(currentFilters.brands);
   const [selectedColors, setSelectedColors] = useState(currentFilters.colors);
@@ -100,12 +102,20 @@ const FilterModal: React.FC<FilterModalProps> = ({
     Clothing: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
     Bags: [],
     Lingerie: ['XS', 'S', 'M', 'L'],
-    Watches: [],
+    Watch: [],
+    Hoodies: [],
   };
 
-  const category = 'Shoes'; // Replace with dynamic category if needed
+  const sizeSupportedCategories = ['Shoes', 'Clothing', 'Hoodies', 'Lingerie'];
+  const supportsSize = sizeSupportedCategories.includes(category);
+
   const availableSizesWithFallback =
-    availableSizes.length > 0 ? availableSizes : defaultSizes[category];
+    supportsSize &&
+    (availableSizes.length > 0 || defaultSizes[category].length > 0)
+      ? availableSizes.length > 0
+        ? availableSizes
+        : defaultSizes[category]
+      : [];
 
   return (
     <Modal visible={visible} animationType="slide">
@@ -230,28 +240,32 @@ const FilterModal: React.FC<FilterModalProps> = ({
           })}
         </View>
 
-        <Text style={styles.label}>Sizes</Text>
-        <View style={styles.pillContainer}>
-          {availableSizesWithFallback.map((size, index) => {
-            const selected = selectedSizes.includes(size);
-            return (
-              <TouchableOpacity
-                key={`${size}-${index}`}
-                style={[styles.pill, selected && styles.pillSelected]}
-                onPress={() =>
-                  toggleSelection(size, selectedSizes, setSelectedSizes)
-                }>
-                <Text
-                  style={[
-                    styles.pillText,
-                    selected && styles.pillTextSelected,
-                  ]}>
-                  {size}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
+        {supportsSize && availableSizesWithFallback.length > 0 && (
+          <>
+            <Text style={styles.label}>Sizes</Text>
+            <View style={styles.pillContainer}>
+              {availableSizesWithFallback.map((size, index) => {
+                const selected = selectedSizes.includes(size);
+                return (
+                  <TouchableOpacity
+                    key={`${size}-${index}`}
+                    style={[styles.pill, selected && styles.pillSelected]}
+                    onPress={() =>
+                      toggleSelection(size, selectedSizes, setSelectedSizes)
+                    }>
+                    <Text
+                      style={[
+                        styles.pillText,
+                        selected && styles.pillTextSelected,
+                      ]}>
+                      {size}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </>
+        )}
 
         <View style={styles.inStockContainer}>
           <Text style={styles.label}>In Stock Only</Text>
