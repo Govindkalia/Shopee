@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -9,7 +9,6 @@ import {
   TouchableOpacity,
   Dimensions,
   TextInput,
-  StatusBar,
   SafeAreaView,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
@@ -48,9 +47,16 @@ const Home = () => {
   const navigation = useNavigation<NavigationProp>();
   const dispatch = useDispatch<AppDispatch>();
 
+  // useEffect(() => {
+  //   dispatch(fetchProducts());
+  //   dispatch(fetchCategories());
+  // }, [dispatch]);
   useEffect(() => {
-    dispatch(fetchProducts());
-    dispatch(fetchCategories());
+    dispatch(fetchProducts())
+      .unwrap()
+      .then(() => {
+        dispatch(fetchCategories());
+      });
   }, [dispatch]);
 
   const products = useSelector(
@@ -81,21 +87,27 @@ const Home = () => {
     </View>
   );
 
-  const renderCategory = (cat: CategorySummary, index: number) => (
-    <TouchableOpacity
-      key={`${cat.name}-${index}`}
-      style={styles.categoryCard}
-      onPress={() => navigation.navigate('CategoryPLP', {category: cat.name})}>
-      <View style={styles.imageGrid}>
-        {cat.images.map((img: string, i: number) => (
-          <Image key={i} source={{uri: img}} style={styles.gridImage} />
-        ))}
-      </View>
-      <View style={styles.categoryInfoRow}>
-        <Text style={styles.categoryTitle}>{cat.name}</Text>
-        <Text style={styles.categoryCount}>{cat.count}</Text>
-      </View>
-    </TouchableOpacity>
+  const renderCategory = useCallback(
+    (cat: CategorySummary, index: number) => (
+      <TouchableOpacity
+        key={`${cat.name}-${index}`}
+        style={styles.categoryCard}
+        onPress={() =>
+          navigation.navigate('CategoryPLP', {category: cat.name})
+        }>
+        <View style={styles.imageGrid}>
+          {cat.images.map((img: string, i: number) => (
+            <Image key={i} source={{uri: img}} style={styles.gridImage} />
+          ))}
+        </View>
+
+        <View style={styles.categoryInfoRow}>
+          <Text style={styles.categoryTitle}>{cat.name}</Text>
+          <Text style={styles.categoryCount}>{cat.count}</Text>
+        </View>
+      </TouchableOpacity>
+    ),
+    [navigation],
   );
 
   return (
@@ -318,7 +330,7 @@ const styles = StyleSheet.create({
 
   bannerContainer: {
     height: 180,
-    marginBottom: 16,
+    marginBottom: 6,
   },
 
   bannerImage: {
@@ -396,7 +408,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginTop: 11,
+    marginTop: 10,
   },
   categoryCard: {
     width: screenWidth / 2 - 24,
@@ -418,6 +430,7 @@ const styles = StyleSheet.create({
   gridImage: {
     width: (screenWidth / 2 - 44) / 2,
     height: 80,
+    resizeMode: 'cover',
     margin: 3,
     borderRadius: 10,
   },

@@ -13,24 +13,7 @@ import {useRoute, RouteProp} from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FilterModal from '../components/FilterModal';
 import {RootState} from '../store';
-
-type Product = {
-  id: string;
-  name: string;
-  price: string;
-  discounted_price: string;
-  description: string;
-  images: string[];
-  category: string;
-  brand: string;
-  color: string[];
-  size: string[];
-  tags: string[];
-  in_stock: boolean;
-  origin: string;
-  material: string[];
-  createdAt: string;
-};
+import {Product} from '../types/Product';
 
 type RouteParams = {
   PLP: {
@@ -122,7 +105,9 @@ const CategoryPLP = ({navigation}: any) => {
     });
 
   const renderProduct = ({item}: {item: Product}) => (
-    <TouchableOpacity style={styles.productCard} onPress={() => {}}>
+    <TouchableOpacity
+      style={styles.productCard}
+      onPress={() => navigation.navigate('CategoryPDP', {product: item})}>
       <Image source={{uri: item.images?.[0]}} style={styles.productImage} />
       <Text style={styles.productName}>{item.name}</Text>
       <Text style={styles.productPrice}>${item.discounted_price}</Text>
@@ -159,6 +144,7 @@ const CategoryPLP = ({navigation}: any) => {
         // maxPrice={maxPrice}
         currentFilters={filters}
         onApplyFilters={newFilters => setFilters(newFilters)}
+        category={category}
       />
     </View>
   );
@@ -170,6 +156,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 30,
+    paddingTop: 40,
+    paddingLeft: 18,
     backgroundColor: '#f8f8f8',
     justifyContent: 'space-between',
   },

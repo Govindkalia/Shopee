@@ -103,7 +103,6 @@
 
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
-import auth from '@react-native-firebase/auth';
 
 // User data interface
 export const UserData = {
@@ -249,31 +248,6 @@ export const getUserByEmail = async (
     return { success: false, error: error.message };
   }
 };
-
-// export const getUserPhoneNumber = async () => {
-//   try {
-//     const currentUser = auth().currentUser;
-//     console.log("current user from phone number ",currentUser);
-//         if (!currentUser) {
-//       console.log('No authenticated user found.');
-//       return null;
-//     }
-
-//     const userDoc = await firestore().collection('users').doc(currentUser.uid).get();
-
-//     if (userDoc.exists) {
-//       const userData = userDoc.data();
-//       console.log("phone number see",userData.phone);
-//       return userData.phone || null;
-//     } else {
-//       console.log('User document does not exist.');
-//       return null;
-//     }
-//   } catch (error) {
-//     console.error('Error fetching phone number:', error);
-//     return null;
-//   }
-// }
 
 
 export const getUserPhoneNumber = async (uid) => {

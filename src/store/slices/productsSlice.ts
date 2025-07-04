@@ -35,6 +35,7 @@
 
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { Product } from '../../types/Product';
 
 export const fetchProducts = createAsyncThunk('products/fetchProducts', async () => {
   const res = await axios.get('https://68414ca4d48516d1d35af8a5.mockapi.io/api/v1/data');
@@ -44,9 +45,19 @@ export const fetchProducts = createAsyncThunk('products/fetchProducts', async ()
   }));
 });
 
+
+interface ProductsState {
+    items: Product[];
+  }
+  
+  const initialState: ProductsState = {
+    items: [],
+  };
+  
+
 const productsSlice = createSlice({
   name: 'products',
-  initialState: { items: [] },
+  initialState,
   reducers: {},
   extraReducers: builder => {
     builder.addCase(fetchProducts.fulfilled, (state, action) => {

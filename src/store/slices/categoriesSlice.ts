@@ -76,16 +76,7 @@
 
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from '../../store'; // adjust path if needed
-
-type Product = {
-  id: string;
-  name: string;
-  price: string;
-  discounted_price: string;
-  description: string;
-  images: string[];
-  category: string;
-};
+import { Product } from '../../types/Product';
 
 type CategorySummary = {
   name: string;
@@ -101,20 +92,24 @@ export const fetchCategories = createAsyncThunk<CategorySummary[], void, { state
     const categoryMap: Record<string, CategorySummary> = {};
 
     products.forEach(item => {
-      if (!categoryMap[item.category]) {
-        categoryMap[item.category] = {
-          name: item.category,
+      const category = item.category;
+    
+      if (!categoryMap[category]) {
+        categoryMap[category] = {
+          name: category,
           count: 1,
-          images: item.images.slice(0, 4),
+          images: item.images.length > 0 ? [item.images[0]] : [],
         };
       } else {
-        categoryMap[item.category].count += 1;
-        const currentImages = categoryMap[item.category].images;
-        if (currentImages.length < 4) {
-          categoryMap[item.category].images.push(...item.images.slice(0, 4 - currentImages.length));
+        categoryMap[category].count += 1;
+    
+        const currentImages = categoryMap[category].images;
+        if (currentImages.length < 4 && item.images.length > 0) {
+          currentImages.push(item.images[0]);
         }
       }
     });
+    
 
     return Object.values(categoryMap);
   }

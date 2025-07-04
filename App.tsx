@@ -2,7 +2,10 @@ import React, {useEffect} from 'react';
 import StartScreen from './src/screens/StartScreen';
 import CreateAccountScreen from './src/screens/CreateAccountScreen';
 import LoginScreen from './src/screens/LoginScreen';
-import {NavigationContainer} from '@react-navigation/native';
+import {
+  NavigationContainer,
+  NavigatorScreenParams,
+} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import SplashScreen from 'react-native-splash-screen';
 import PasswordRecoveryScreen from './src/screens/PasswordRecoveryScreen';
@@ -24,6 +27,8 @@ import {store} from './src/store';
 import {StatusBar} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import CategoryPLPScreen from './src/screens/CategoryPLPScreen';
+import CategoryPDPScreen from './src/screens/CategoryPDPScreen';
+import {Product} from './src/types/Product';
 
 export type RootStackParamList = {
   AuthLoading: undefined;
@@ -36,9 +41,10 @@ export type RootStackParamList = {
   PasswordRecoveryScreenByPhone: {phoneNumber?: string} | undefined;
   SetupNewPasswordScreen: undefined;
   PasswordRecoveryScreenByEmail: {email: string};
-  MainTabs: undefined;
+  MainTabs: NavigatorScreenParams<TabParamList>;
   Onboarding: undefined;
   CategoryPLP: {category: string};
+  CategoryPDP: {product: Product};
 };
 
 export type TabParamList = {
@@ -149,6 +155,7 @@ function App(): React.JSX.Element {
             <Stack.Screen name="Onboarding" component={OnboardingScreen} />
             <Stack.Screen name="MainTabs" component={MainTabs} />
             <Stack.Screen name="CategoryPLP" component={CategoryPLPScreen} />
+            <Stack.Screen name="CategoryPDP" component={CategoryPDPScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>
