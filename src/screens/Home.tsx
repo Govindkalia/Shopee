@@ -425,11 +425,11 @@ const styles = StyleSheet.create({
   imageGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 4,
+    // gap: 1,
   },
   gridImage: {
-    width: (screenWidth / 2 - 44) / 2,
-    height: 80,
+    width: (screenWidth / 2 - 41) / 2,
+    height: 100,
     resizeMode: 'cover',
     margin: 3,
     borderRadius: 10,

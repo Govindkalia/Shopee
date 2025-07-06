@@ -7,14 +7,22 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  Dimensions,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../store';
 import {removeFromWishlist} from '../store/slices/wishlistSlice';
 import {addToCart} from '../store/slices/cartSlice';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {useNavigation} from '@react-navigation/native';
+import {RootStackParamList} from '../../App';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+
+const screenWidth = Dimensions.get('window').width;
 
 const WishlistScreen = () => {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const dispatch = useDispatch();
   const wishlistItems = useSelector((state: RootState) => state.wishlist.items);
 
@@ -25,7 +33,12 @@ const WishlistScreen = () => {
   };
 
   const renderItem = ({item}: any) => (
-    <View style={styles.itemContainer}>
+    // <View style={styles.itemContainer}>
+
+    <TouchableOpacity
+      onPress={() => navigation.navigate('CategoryPDP', {product: item})}
+      style={styles.itemContainer}
+      activeOpacity={0.8}>
       <View style={styles.imageContainer}>
         <Image source={{uri: item.images[0]}} style={styles.image} />
       </View>
@@ -43,7 +56,7 @@ const WishlistScreen = () => {
         onPress={() => handleRemove(item.id)}
         style={styles.iconLeft}>
         <View style={styles.iconCircle}>
-          <Ionicons name="trash-outline" size={20} color="red" />
+          <Ionicons name="trash-outline" size={18} color="red" />
         </View>
       </TouchableOpacity>
       <TouchableOpacity
@@ -51,7 +64,8 @@ const WishlistScreen = () => {
         style={styles.iconRight}>
         <Ionicons name="cart-outline" size={30} color="#316bff" />
       </TouchableOpacity>
-    </View>
+      {/* </View> */}
+    </TouchableOpacity>
   );
 
   return (
@@ -59,12 +73,21 @@ const WishlistScreen = () => {
       <View style={styles.header}>
         <Text style={styles.userName}>Wishlist</Text>
       </View>
-      <FlatList
-        data={wishlistItems}
-        keyExtractor={item => item.id}
-        renderItem={renderItem}
-        contentContainerStyle={styles.list}
-      />
+      {wishlistItems.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Image
+            source={require('../assets/emptyWishlist.png')}
+            style={styles.emptyImage}
+          />
+        </View>
+      ) : (
+        <FlatList
+          data={wishlistItems}
+          keyExtractor={item => item.id}
+          renderItem={renderItem}
+          contentContainerStyle={styles.list}
+        />
+      )}
     </View>
   );
 };
@@ -112,8 +135,9 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   image: {
-    width: 130,
-    height: 110,
+    // width: (screenWidth / 2 + 20) / 1.9,
+    height: 120,
+    aspectRatio: 0.7,
     borderRadius: 8,
     resizeMode: 'cover',
   },
@@ -147,8 +171,8 @@ const styles = StyleSheet.create({
   },
   iconLeft: {
     position: 'absolute',
-    left: 12,
-    top: 75,
+    left: 8,
+    top: 80,
   },
   iconCircle: {
     backgroundColor: 'white',
@@ -168,6 +192,18 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 8,
     top: 80,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  emptyImage: {
+    width: 200,
+    height: 200,
+    resizeMode: 'contain',
+    marginBottom: 20,
   },
 });
 

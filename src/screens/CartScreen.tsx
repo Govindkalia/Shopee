@@ -6,13 +6,20 @@ import {
   Image,
   TouchableOpacity,
   StyleSheet,
+  Dimensions,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../store';
 import {removeFromCart, updateQuantity} from '../store/slices/cartSlice';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {RootStackParamList} from '../../App';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {useNavigation} from '@react-navigation/native';
+const screenWidth = Dimensions.get('window').width;
 
 const CartScreen = () => {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const dispatch = useDispatch();
   const cartItems = useSelector((state: RootState) => state.cart.items);
 
@@ -30,7 +37,10 @@ const CartScreen = () => {
   };
 
   const renderItem = ({item}: any) => (
-    <View style={styles.itemContainer}>
+    <TouchableOpacity
+      onPress={() => navigation.navigate('CategoryPDP', {product: item})}
+      style={styles.itemContainer}
+      activeOpacity={0.8}>
       <View style={styles.imageContainer}>
         <Image source={{uri: item.images[0]}} style={styles.image} />
       </View>
@@ -75,10 +85,10 @@ const CartScreen = () => {
         onPress={() => handleRemove(item.id, item.selectedSize)}
         style={styles.iconLeft}>
         <View style={styles.iconCircle}>
-          <Ionicons name="trash-outline" size={20} color="red" />
+          <Ionicons name="trash-outline" size={18} color="red" />
         </View>
       </TouchableOpacity>
-    </View>
+    </TouchableOpacity>
   );
 
   const total = cartItems.reduce(
@@ -91,15 +101,37 @@ const CartScreen = () => {
       <View style={styles.header}>
         <Text style={styles.userName}>Cart</Text>
       </View>
-      <FlatList
-        data={cartItems}
-        keyExtractor={item => `${item.id}-${item.selectedSize}`}
-        renderItem={renderItem}
-        contentContainerStyle={styles.list}
-      />
-      <View style={styles.totalContainer}>
-        <Text style={styles.totalLabel}>Total:</Text>
-        <Text style={styles.totalValue}>${total.toFixed(2)}</Text>
+      {cartItems.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Image
+            source={require('../assets/emptyCart.png')}
+            style={styles.emptyImage}
+          />
+        </View>
+      ) : (
+        <FlatList
+          data={cartItems}
+          keyExtractor={item => `${item.id}-${item.selectedSize}`}
+          renderItem={renderItem}
+          contentContainerStyle={styles.list}
+        />
+      )}
+
+      <View style={styles.bottomContainer}>
+        <View style={styles.totalSection}>
+          <Text style={styles.totalLabel}>Total: </Text>
+          <Text style={styles.totalValue}>${total.toFixed(2)}</Text>
+        </View>
+        <TouchableOpacity
+          style={[
+            styles.checkoutButton,
+            total === 0 && styles.checkoutButtonDisabled,
+          ]}
+          disabled={total === 0}
+          // onPress={() => navigation.navigate('Wishlist')}
+        >
+          <Text style={styles.checkoutText}>Checkout</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -148,8 +180,12 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   image: {
-    width: 130,
-    height: 110,
+    // width: 130,
+    // height: 110,
+    // borderRadius: 8,
+    // resizeMode: 'cover',
+    height: 120,
+    aspectRatio: 0.7,
     borderRadius: 8,
     resizeMode: 'cover',
   },
@@ -215,8 +251,8 @@ const styles = StyleSheet.create({
 
   iconLeft: {
     position: 'absolute',
-    left: 12,
-    top: 75,
+    left: 8,
+    top: 80,
   },
   iconCircle: {
     backgroundColor: 'white',
@@ -231,23 +267,59 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 3, // for Android shadow
   },
-  totalContainer: {
+  totalLabel: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  totalValue: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+
+  bottomContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderTopWidth: 1,
     borderColor: '#eee',
     backgroundColor: '#fff',
   },
-  totalLabel: {
-    fontSize: 16,
+
+  totalSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  checkoutButton: {
+    backgroundColor: '#007bff',
+    paddingVertical: 10,
+    paddingHorizontal: 35,
+    borderRadius: 10,
+  },
+
+  checkoutButtonDisabled: {
+    backgroundColor: '#ccc',
+  },
+
+  checkoutText: {
+    color: '#fff',
     fontWeight: 'bold',
   },
-  totalValue: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#000',
+
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  emptyImage: {
+    width: 200,
+    height: 200,
+    resizeMode: 'contain',
+    marginBottom: 20,
   },
 });
 
