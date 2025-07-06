@@ -110,7 +110,11 @@ const CategoryPLP = ({navigation}: any) => {
       onPress={() => navigation.navigate('CategoryPDP', {product: item})}>
       <Image source={{uri: item.images?.[0]}} style={styles.productImage} />
       <Text style={styles.productName}>{item.name}</Text>
-      <Text style={styles.productPrice}>${item.discounted_price}</Text>
+      <View style={styles.priceRow}>
+        <Text style={styles.strikePrice}>${item.discounted_price}</Text>
+
+        <Text style={styles.price}>${item.price}</Text>
+      </View>
     </TouchableOpacity>
   );
 
@@ -183,7 +187,7 @@ const styles = StyleSheet.create({
   },
   productImage: {
     width: '100%',
-    height: Dimensions.get('window').width / 2 - 32,
+    height: Dimensions.get('window').width / 2,
     borderRadius: 8,
     marginBottom: 8,
   },
@@ -191,10 +195,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-  productPrice: {
-    fontSize: 14,
+  priceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 6,
+    marginBottom: 12,
+  },
+  strikePrice: {
+    textDecorationLine: 'line-through',
     color: '#888',
-    marginTop: 4,
+    marginRight: 8,
+    fontSize: 14,
+  },
+  price: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#000',
   },
 });
 

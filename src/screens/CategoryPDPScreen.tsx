@@ -16,7 +16,6 @@ import {addToCart} from '../store/slices/cartSlice';
 import Swiper from 'react-native-swiper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {RootState} from '../store';
-import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {RootStackParamList, TabParamList} from '../../App';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
@@ -69,14 +68,6 @@ const CategoryPDPScreen = () => {
     setWishlisted(!wishlisted);
   };
 
-  const handleAddToCart = () => {
-    if (supportsSize && !selectedSize) {
-      Alert.alert('Please select a size before adding to cart.');
-      return;
-    }
-    dispatch(addToCart({...product, selectedSize: selectedSize!, quantity: 1}));
-  };
-
   const handleBuyNow = () => {
     if (supportsSize && !selectedSize) {
       Alert.alert('Please select a size before buying.');
@@ -114,7 +105,11 @@ const CategoryPDPScreen = () => {
         </View>
 
         <View style={styles.content}>
-          <Text style={styles.price}>${product.discounted_price}</Text>
+          <View style={styles.priceRow}>
+            <Text style={styles.strikePrice}>${product.discounted_price}</Text>
+
+            <Text style={styles.price}>${product.price}</Text>
+          </View>
           <Text style={styles.description}>{product.description}</Text>
 
           {supportsSize && allCategorySizes.length > 0 && (
@@ -272,11 +267,22 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 8,
   },
+  priceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 6,
+    marginBottom: 12,
+  },
+  strikePrice: {
+    textDecorationLine: 'line-through',
+    color: '#888',
+    marginRight: 8,
+    fontSize: 18,
+  },
   price: {
     fontSize: 30,
     fontWeight: 'bold',
     color: '#000',
-    marginBottom: 12,
   },
   description: {
     fontSize: 18,
