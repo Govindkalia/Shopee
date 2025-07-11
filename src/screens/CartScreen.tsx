@@ -17,6 +17,8 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useNavigation} from '@react-navigation/native';
 const screenWidth = Dimensions.get('window').width;
 
+const sizeSupportedCategories = ['Shoes', 'Clothing', 'Hoodies', 'Lingerie'];
+
 const CartScreen = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -48,7 +50,11 @@ const CartScreen = () => {
         <Text style={styles.description}>
           {item.description || 'Lorem ipsum dolor sit amet consectetur.'}
         </Text>
-        <Text style={styles.size}>Size: {item.selectedSize}</Text>
+        <Text style={styles.size}>
+          {sizeSupportedCategories.includes(item.category)
+            ? `Size: ${item.selectedSize}`
+            : 'Size: One Size'}
+        </Text>
 
         <View style={styles.priceQuantityRow}>
           <Text style={styles.price}>${item.price}</Text>

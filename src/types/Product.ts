@@ -14,5 +14,9 @@ export type Product = {
     origin: string;
     material: string[];
     createdAt: string;
+    
+selectedSize?: string;
+  quantity?: number;
+
   };
   

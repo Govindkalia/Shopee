@@ -47,10 +47,6 @@ const Home = () => {
   const navigation = useNavigation<NavigationProp>();
   const dispatch = useDispatch<AppDispatch>();
 
-  // useEffect(() => {
-  //   dispatch(fetchProducts());
-  //   dispatch(fetchCategories());
-  // }, [dispatch]);
   useEffect(() => {
     dispatch(fetchProducts())
       .unwrap()
