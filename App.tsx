@@ -29,6 +29,7 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import CategoryPLPScreen from './src/screens/CategoryPLPScreen';
 import CategoryPDPScreen from './src/screens/CategoryPDPScreen';
 import {Product} from './src/types/Product';
+import Toast from 'react-native-root-toast';
 
 export type RootStackParamList = {
   AuthLoading: undefined;

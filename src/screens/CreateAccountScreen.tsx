@@ -1,676 +1,3 @@
-// 'use client';
-
-// import {useState, useEffect} from 'react';
-// import {
-//   View,
-//   Text,
-//   StyleSheet,
-//   Image,
-//   TouchableOpacity,
-//   TextInput,
-//   Alert,
-//   ScrollView,
-//   ActivityIndicator,
-//   KeyboardAvoidingView,
-//   Platform,
-// } from 'react-native';
-// import Icon from 'react-native-vector-icons/Feather';
-
-// import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
-
-// import {PermissionsAndroid} from 'react-native';
-// import {
-//   createUserWithEmailAndPassword,
-//   getAuth,
-// } from '@react-native-firebase/auth';
-// import {RootStackParamList} from '../../App';
-// import {NativeStackScreenProps} from '@react-navigation/native-stack';
-
-// type Props = NativeStackScreenProps<RootStackParamList, 'Signup'>;
-
-// const requestMediaPermission = async (): Promise<boolean> => {
-//   if (Platform.OS === 'android' && Platform.Version >= 33) {
-//     const granted = await PermissionsAndroid.request(
-//       PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
-//       {
-//         title: 'Media Permission',
-//         message: 'App needs access to your photos to upload a profile picture',
-//         buttonPositive: 'OK',
-//       },
-//     );
-//     return granted === PermissionsAndroid.RESULTS.GRANTED;
-//   }
-//   return true;
-// };
-
-// const requestCameraPermission = async (): Promise<boolean> => {
-//   if (Platform.OS === 'android') {
-//     const granted = await PermissionsAndroid.request(
-//       PermissionsAndroid.PERMISSIONS.CAMERA,
-//       {
-//         title: 'Camera Permission',
-//         message: 'App needs access to your camera to take a photo',
-//         buttonPositive: 'OK',
-//       },
-//     );
-//     return granted === PermissionsAndroid.RESULTS.GRANTED;
-//   }
-//   return true;
-// };
-
-// interface ValidationErrors {
-//   email: string;
-//   password: string;
-//   phone: string;
-// }
-
-// const CreateAccountScreen: React.FC<Props> = ({navigation}) => {
-//   const [email, setEmail] = useState('');
-//   const [password, setPassword] = useState('');
-//   const [confirmPassword, setConfirmPassword] = useState('');
-//   const [phone, setPhone] = useState('');
-//   const [name, setName] = useState('');
-//   const [showPassword, setShowPassword] = useState(false);
-//   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-//   const [photoUri, setPhotoUri] = useState<string | null>(null);
-//   const [loading, setLoading] = useState(false);
-
-//   const [errors, setErrors] = useState<ValidationErrors>({
-//     email: '',
-//     password: '',
-//     phone: '',
-//   });
-//   const [touched, setTouched] = useState({
-//     email: false,
-//     password: false,
-//     confirmPassword: false,
-//     phone: false,
-//     name: false,
-//   });
-
-//   const [passwordStrength, setPasswordStrength] = useState({
-//     score: 0,
-//     label: '',
-//     color: '#ccc',
-//   });
-
-//   useEffect(() => {
-//     if (touched.email) {
-//       validateEmail(email);
-//     }
-//   }, [email, touched.email]);
-
-//   useEffect(() => {
-//     if (touched.password) {
-//       validatePassword(password);
-//     }
-//   }, [password, touched.password]);
-
-//   useEffect(() => {
-//     if (touched.confirmPassword) {
-//       validateConfirmPassword(confirmPassword);
-//     }
-//   }, [confirmPassword, password, touched.confirmPassword]);
-
-//   useEffect(() => {
-//     if (touched.phone) {
-//       validatePhone(phone);
-//     }
-//   }, [phone, touched.phone]);
-
-//   const handleImagePick = () => {
-//     Alert.alert('Upload Photo', 'Choose an option', [
-//       {
-//         text: 'Take Photo',
-//         onPress: async () => {
-//           const hasPermission = await requestCameraPermission();
-//           if (hasPermission) {
-//             launchCamera({mediaType: 'photo'}, response => {
-//               if (response.assets?.length) {
-//                 setPhotoUri(response.assets[0].uri || null);
-//               }
-//             });
-//           } else {
-//             Alert.alert('Camera permission denied');
-//           }
-//         },
-//       },
-//       {
-//         text: 'Choose from Gallery',
-//         onPress: async () => {
-//           const hasPermission = await requestMediaPermission();
-//           if (hasPermission) {
-//             launchImageLibrary({mediaType: 'photo'}, response => {
-//               if (response.assets?.length) {
-//                 setPhotoUri(response.assets[0].uri || null);
-//               }
-//             });
-//           } else {
-//             Alert.alert('Gallery permission denied');
-//           }
-//         },
-//       },
-//       {text: 'Cancel', style: 'cancel'},
-//     ]);
-//   };
-
-//   const validateEmail = (value: string): boolean => {
-//     const emailRegex =
-//       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
-//     if (!value.trim()) {
-//       setErrors(prev => ({...prev, email: 'Email is required'}));
-//       return false;
-//     } else if (!emailRegex.test(value)) {
-//       setErrors(prev => ({
-//         ...prev,
-//         email: 'Please enter a valid email address',
-//       }));
-//       return false;
-//     } else {
-//       setErrors(prev => ({...prev, email: ''}));
-//       return true;
-//     }
-//   };
-
-//   const validatePassword = (value: string): boolean => {
-//     if (!value.trim()) {
-//       setErrors(prev => ({...prev, password: 'Password is required'}));
-//       setPasswordStrength({score: 0, label: '', color: '#ccc'});
-//       return false;
-//     }
-
-//     let score = 0;
-//     let feedback = '';
-
-//     if (value.length < 8) {
-//       feedback = 'Password must be at least 8 characters';
-//       setErrors(prev => ({...prev, password: feedback}));
-//       setPasswordStrength({score: 1, label: 'Weak', color: '#ff4d4f'});
-//       return false;
-//     } else {
-//       score += 1;
-//     }
-
-//     const hasUpperCase = /[A-Z]/.test(value);
-//     const hasLowerCase = /[a-z]/.test(value);
-//     const hasNumbers = /\d/.test(value);
-//     const hasSpecialChars = /[!@#$%^&*(),.?":{}|<>]/.test(value);
-
-//     let complexityScore = 0;
-//     if (hasUpperCase) complexityScore++;
-//     if (hasLowerCase) complexityScore++;
-//     if (hasNumbers) complexityScore++;
-//     if (hasSpecialChars) complexityScore++;
-
-//     score += complexityScore;
-
-//     if (score <= 2) {
-//       setPasswordStrength({score: 2, label: 'Weak', color: '#ff4d4f'});
-//       feedback = 'Password is too weak';
-//     } else if (score <= 3) {
-//       setPasswordStrength({score: 3, label: 'Medium', color: '#faad14'});
-//       feedback = '';
-//     } else {
-//       setPasswordStrength({score: 4, label: 'Strong', color: '#52c41a'});
-//       feedback = '';
-//     }
-
-//     setErrors(prev => ({...prev, password: feedback}));
-//     return feedback === '';
-//   };
-
-//   const validateConfirmPassword = (value: string): boolean => {
-//     if (value !== password) {
-//       setErrors(prev => ({...prev, password: 'Passwords do not match'}));
-//       return false;
-//     } else {
-//       setErrors(prev => ({...prev, password: ''}));
-//       return true;
-//     }
-//   };
-
-//   const validatePhone = (value: string): boolean => {
-//     const phoneRegex = /^(\+?\d{1,3})?[\s.-]?\d{3}[\s.-]?\d{3}[\s.-]?\d{4}$/;
-//     if (!value.trim()) {
-//       setErrors(prev => ({...prev, phone: 'Phone number is required'}));
-//       return false;
-//     } else if (!phoneRegex.test(value)) {
-//       setErrors(prev => ({
-//         ...prev,
-//         phone: 'Please enter a valid phone number',
-//       }));
-//       return false;
-//     } else {
-//       setErrors(prev => ({...prev, phone: ''}));
-//       return true;
-//     }
-//   };
-
-//   const validateName = (value: string): boolean => {
-//     if (!value.trim()) {
-//       return false;
-//     }
-//     return true;
-//   };
-
-//   const handleBlur = (field: keyof typeof touched) => {
-//     setTouched(prev => ({...prev, [field]: true}));
-
-//     switch (field) {
-//       case 'email':
-//         validateEmail(email);
-//         break;
-//       case 'password':
-//         validatePassword(password);
-//         break;
-//       case 'confirmPassword':
-//         validateConfirmPassword(confirmPassword);
-//         break;
-//       case 'phone':
-//         validatePhone(phone);
-//         break;
-//       case 'name':
-//         validateName(name);
-//         break;
-//     }
-//   };
-
-//   const validateAllInputs = (): boolean => {
-//     setTouched({
-//       email: true,
-//       password: true,
-//       confirmPassword: true,
-//       phone: true,
-//       name: true,
-//     });
-
-//     const isEmailValid = validateEmail(email);
-//     const isPasswordValid = validatePassword(password);
-//     const isConfirmPasswordValid = validateConfirmPassword(confirmPassword);
-//     const isPhoneValid = validatePhone(phone);
-//     const isNameValid = validateName(name);
-
-//     return (
-//       isEmailValid &&
-//       isPasswordValid &&
-//       isConfirmPasswordValid &&
-//       isPhoneValid &&
-//       isNameValid
-//     );
-//   };
-
-//   const onRegister = async () => {
-//     if (!validateAllInputs()) {
-//       Alert.alert('Validation Error', 'Please fix the errors in the form');
-//       return;
-//     }
-
-//     setLoading(true);
-//     try {
-//       await createUserWithEmailAndPassword(getAuth(), email, password);
-//       Alert.alert('Success', 'User account created & signed in!');
-
-//       setEmail('');
-//       setPassword('');
-//       setConfirmPassword('');
-//       setPhone('');
-//       setName('');
-//       setPhotoUri(null);
-//       setTouched({
-//         email: false,
-//         password: false,
-//         confirmPassword: false,
-//         phone: false,
-//         name: false,
-//       });
-//     } catch (error: any) {
-//       if (error.code === 'auth/email-already-in-use') {
-//         Alert.alert('Error', 'That email address is already in use!');
-//       } else if (error.code === 'auth/invalid-email') {
-//         Alert.alert('Error', 'That email address is invalid!');
-//       } else if (error.code === 'auth/weak-password') {
-//         Alert.alert('Error', 'Password is too weak.');
-//       } else {
-//         Alert.alert('Error', 'Something went wrong. Try again later.');
-//         console.error(error);
-//       }
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const renderPasswordStrength = () => {
-//     if (!touched.password || !password) return null;
-
-//     return (
-//       <View style={styles.strengthContainer}>
-//         <Text style={styles.strengthLabel}>Password strength: </Text>
-//         <Text style={[styles.strengthValue, {color: passwordStrength.color}]}>
-//           {passwordStrength.label}
-//         </Text>
-//         <View style={styles.strengthBar}>
-//           <View
-//             style={[
-//               styles.strengthFill,
-//               {
-//                 width: `${(passwordStrength.score / 4) * 100}%`,
-//                 backgroundColor: passwordStrength.color,
-//               },
-//             ]}
-//           />
-//         </View>
-//       </View>
-//     );
-//   };
-
-//   return (
-//     <KeyboardAvoidingView
-//       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-//       style={{flex: 1}}>
-//       <ScrollView
-//         contentContainerStyle={styles.scrollContainer}
-//         keyboardShouldPersistTaps="handled">
-//         <View style={styles.container}>
-//           <Text style={styles.title}>Create{'\n'}Account</Text>
-
-//           <TouchableOpacity
-//             style={photoUri ? styles.imageContainer : styles.photoPlaceholder}
-//             onPress={handleImagePick}>
-//             {photoUri ? (
-//               <Image source={{uri: photoUri}} style={styles.profilePhoto} />
-//             ) : (
-//               <Icon name="camera" size={24} color="#3A5BFF" />
-//             )}
-//           </TouchableOpacity>
-
-//           <View style={styles.inputWrapper}>
-//             <TextInput
-//               style={styles.input}
-//               placeholder="Full Name"
-//               placeholderTextColor="#999"
-//               value={name}
-//               onChangeText={setName}
-//               onBlur={() => handleBlur('name')}
-//             />
-//           </View>
-
-//           <View style={styles.inputWrapper}>
-//             <TextInput
-//               style={[
-//                 styles.input,
-//                 touched.email && errors.email ? styles.inputError : null,
-//               ]}
-//               placeholder="Email"
-//               placeholderTextColor="#999"
-//               value={email}
-//               onChangeText={setEmail}
-//               onBlur={() => handleBlur('email')}
-//               keyboardType="email-address"
-//               autoCapitalize="none"
-//             />
-//             {touched.email && errors.email ? (
-//               <Text style={styles.errorText}>{errors.email}</Text>
-//             ) : null}
-//           </View>
-
-//           <View style={styles.inputWrapper}>
-//             <View
-//               style={[
-//                 styles.passwordContainer,
-//                 touched.password && errors.password ? styles.inputError : null,
-//               ]}>
-//               <TextInput
-//                 style={styles.passwordInput}
-//                 placeholder="Password"
-//                 placeholderTextColor="#999"
-//                 secureTextEntry={!showPassword}
-//                 value={password}
-//                 onChangeText={setPassword}
-//                 onBlur={() => handleBlur('password')}
-//                 autoCapitalize="none"
-//               />
-//               <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-//                 <Icon
-//                   name={showPassword ? 'eye' : 'eye-off'}
-//                   size={20}
-//                   color="#999"
-//                 />
-//               </TouchableOpacity>
-//             </View>
-//             {renderPasswordStrength()}
-//             {touched.password && errors.password ? (
-//               <Text style={styles.errorText}>{errors.password}</Text>
-//             ) : null}
-//           </View>
-
-//           <View style={styles.inputWrapper}>
-//             <View
-//               style={[
-//                 styles.passwordContainer,
-//                 touched.confirmPassword && password !== confirmPassword
-//                   ? styles.inputError
-//                   : null,
-//               ]}>
-//               <TextInput
-//                 style={styles.passwordInput}
-//                 placeholder="Confirm Password"
-//                 placeholderTextColor="#999"
-//                 secureTextEntry={!showConfirmPassword}
-//                 value={confirmPassword}
-//                 onChangeText={setConfirmPassword}
-//                 onBlur={() => handleBlur('confirmPassword')}
-//                 autoCapitalize="none"
-//               />
-//               <TouchableOpacity
-//                 onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
-//                 <Icon
-//                   name={showConfirmPassword ? 'eye' : 'eye-off'}
-//                   size={20}
-//                   color="#999"
-//                 />
-//               </TouchableOpacity>
-//             </View>
-//             {touched.confirmPassword && password !== confirmPassword ? (
-//               <Text style={styles.errorText}>Passwords do not match</Text>
-//             ) : null}
-//           </View>
-
-//           <View style={styles.inputWrapper}>
-//             <View
-//               style={[
-//                 styles.phoneContainer,
-//                 touched.phone && errors.phone ? styles.inputError : null,
-//               ]}>
-//               <TextInput
-//                 style={styles.phoneInput}
-//                 placeholder="Your number"
-//                 placeholderTextColor="#999"
-//                 keyboardType="phone-pad"
-//                 value={phone}
-//                 onChangeText={setPhone}
-//                 onBlur={() => handleBlur('phone')}
-//               />
-//             </View>
-//             {touched.phone && errors.phone ? (
-//               <Text style={styles.errorText}>{errors.phone}</Text>
-//             ) : null}
-//           </View>
-
-//           <TouchableOpacity
-//             onPress={onRegister}
-//             style={[styles.doneButton, loading && styles.disabledButton]}
-//             disabled={loading}>
-//             {loading ? (
-//               <ActivityIndicator color="#fff" size="small" />
-//             ) : (
-//               <Text style={styles.doneText}>Create Account</Text>
-//             )}
-//           </TouchableOpacity>
-
-//           <TouchableOpacity>
-//             <Text style={styles.cancelText}>Cancel</Text>
-//           </TouchableOpacity>
-
-//           <View style={styles.termsContainer}>
-//             <Text style={styles.termsText}>
-//               By signing up, you agree to our{' '}
-//               <Text style={styles.termsLink}>Terms of Service</Text> and{' '}
-//               <Text style={styles.termsLink}>Privacy Policy</Text>
-//             </Text>
-//           </View>
-//         </View>
-//       </ScrollView>
-//     </KeyboardAvoidingView>
-//   );
-// };
-
-// export default CreateAccountScreen;
-
-// const styles = StyleSheet.create({
-//   scrollContainer: {
-//     flexGrow: 1,
-//   },
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#fff',
-//     padding: 24,
-//     alignItems: 'center',
-//   },
-//   title: {
-//     fontSize: 36,
-//     fontWeight: 'bold',
-//     alignSelf: 'flex-start',
-//     marginTop: 40,
-//     marginBottom: 30,
-//     color: '#000',
-//   },
-//   profilePhoto: {
-//     width: 80,
-//     height: 80,
-//     borderRadius: 40,
-//   },
-//   imageContainer: {
-//     marginBottom: 30,
-//     borderRadius: 40,
-//     overflow: 'hidden',
-//   },
-//   photoPlaceholder: {
-//     borderWidth: 2,
-//     borderColor: '#3A5BFF',
-//     borderStyle: 'dashed',
-//     borderRadius: 50,
-//     padding: 25,
-//     marginBottom: 30,
-//   },
-//   inputWrapper: {
-//     width: '100%',
-//     marginBottom: 16,
-//   },
-//   input: {
-//     width: '100%',
-//     backgroundColor: '#F6F6F6',
-//     borderRadius: 12,
-//     padding: 16,
-//     fontSize: 16,
-//   },
-//   inputError: {
-//     borderWidth: 1,
-//     borderColor: '#ff4d4f',
-//   },
-//   errorText: {
-//     color: '#ff4d4f',
-//     fontSize: 12,
-//     marginTop: 4,
-//     marginLeft: 4,
-//   },
-//   passwordContainer: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     width: '100%',
-//     backgroundColor: '#F6F6F6',
-//     borderRadius: 12,
-//     paddingHorizontal: 16,
-//   },
-//   passwordInput: {
-//     flex: 1,
-//     paddingVertical: 16,
-//     fontSize: 16,
-//   },
-//   phoneContainer: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     width: '100%',
-//     backgroundColor: '#F6F6F6',
-//     borderRadius: 12,
-//     paddingHorizontal: 16,
-//     height: 56,
-//   },
-//   phoneInput: {
-//     flex: 1,
-//     paddingVertical: 16,
-//     fontSize: 16,
-//   },
-//   strengthContainer: {
-//     marginTop: 8,
-//     width: '100%',
-//   },
-//   strengthLabel: {
-//     fontSize: 12,
-//     color: '#666',
-//   },
-//   strengthValue: {
-//     fontSize: 12,
-//     fontWeight: 'bold',
-//     marginLeft: 4,
-//   },
-//   strengthBar: {
-//     height: 4,
-//     backgroundColor: '#eee',
-//     borderRadius: 2,
-//     marginTop: 4,
-//     width: '100%',
-//   },
-//   strengthFill: {
-//     height: '100%',
-//     borderRadius: 2,
-//   },
-//   doneButton: {
-//     backgroundColor: '#3A5BFF',
-//     width: '100%',
-//     borderRadius: 12,
-//     paddingVertical: 16,
-//     alignItems: 'center',
-//     marginBottom: 16,
-//   },
-//   disabledButton: {
-//     opacity: 0.7,
-//   },
-//   doneText: {
-//     color: '#fff',
-//     fontSize: 16,
-//     fontWeight: '600',
-//   },
-//   cancelText: {
-//     color: '#3A5BFF',
-//     fontSize: 16,
-//     fontWeight: '500',
-//   },
-//   termsContainer: {
-//     marginTop: 10,
-//     paddingHorizontal: 20,
-//   },
-//   termsText: {
-//     fontSize: 12,
-//     color: '#666',
-//     textAlign: 'center',
-//   },
-//   termsLink: {
-//     color: '#3A5BFF',
-//     fontWeight: '500',
-//   },
-// });
-
 'use client';
 
 import {useState, useEffect, useRef} from 'react';
@@ -713,7 +40,8 @@ import {
   parsePhoneNumberFromString,
   isValidPhoneNumber,
 } from 'libphonenumber-js';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import CustomSizeAlert from '../components/alerts/customSizeAlert';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Signup'>;
 
@@ -768,6 +96,16 @@ const CreateAccountScreen: React.FC<Props> = ({navigation}) => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertTitle, setAlertTitle] = useState('');
+  const [alertMessage, setAlertMessage] = useState('');
+
+  const showAlert = (title: string, message: string) => {
+    setAlertTitle(title);
+    setAlertMessage(message);
+    setAlertVisible(true);
+  };
 
   const [errors, setErrors] = useState<ValidationErrors>({
     email: '',
@@ -866,39 +204,6 @@ const CreateAccountScreen: React.FC<Props> = ({navigation}) => {
 
   const handleImagePick = () => {
     setShowModal(true);
-    // Alert.alert('Upload Photo', 'Choose an option', [
-    //   {
-    //     text: 'Take Photo',
-    //     onPress: async () => {
-    //       const hasPermission = await requestCameraPermission();
-    //       if (hasPermission) {
-    //         launchCamera({mediaType: 'photo'}, response => {
-    //           if (response.assets?.length) {
-    //             setPhotoUri(response.assets[0].uri || null);
-    //           }
-    //         });
-    //       } else {
-    //         Alert.alert('Camera permission denied');
-    //       }
-    //     },
-    //   },
-    //   {
-    //     text: 'Choose from Gallery',
-    //     onPress: async () => {
-    //       const hasPermission = await requestMediaPermission();
-    //       if (hasPermission) {
-    //         launchImageLibrary({mediaType: 'photo'}, response => {
-    //           if (response.assets?.length) {
-    //             setPhotoUri(response.assets[0].uri || null);
-    //           }
-    //         });
-    //       } else {
-    //         Alert.alert('Gallery permission denied');
-    //       }
-    //     },
-    //   },
-    //   {text: 'Cancel', style: 'cancel'},
-    // ]);
   };
 
   const handleCamera = async () => {
@@ -1085,7 +390,8 @@ const CreateAccountScreen: React.FC<Props> = ({navigation}) => {
     console.log('onRegister called in CreateAccountScreen comp');
     if (!validateAllInputs()) {
       console.log('Validation error occured in CreateAccountScreen');
-      Alert.alert('Validation Error', 'Please fix the errors in the form');
+      // Alert.alert('Validation Error', 'Please fix the errors in the form');
+      showAlert('Validation Error', 'Please fix the errors in the form');
       return;
     }
 
@@ -1113,7 +419,6 @@ const CreateAccountScreen: React.FC<Props> = ({navigation}) => {
       console.log('user stored in CreateAccountScreen in result : ', result);
 
       if (result.success) {
-        Alert.alert('Success', 'Account created successfully!');
         setEmail('');
         setPassword('');
         setConfirmPassword('');
@@ -1132,17 +437,17 @@ const CreateAccountScreen: React.FC<Props> = ({navigation}) => {
           routes: [{name: 'AuthLoading'}],
         });
       } else {
-        Alert.alert('Error', 'Account created but failed to save profile data');
+        showAlert('Error', 'Account created but failed to save profile data');
       }
     } catch (error: any) {
       if (error.code === 'auth/email-already-in-use') {
-        Alert.alert('Error', 'That email address is already in use!');
+        showAlert('Error', 'That email address is already in use!');
       } else if (error.code === 'auth/invalid-email') {
-        Alert.alert('Error', 'That email address is invalid!');
+        showAlert('Error', 'That email address is invalid!');
       } else if (error.code === 'auth/weak-password') {
-        Alert.alert('Error', 'Password is too weak.');
+        showAlert('Error', 'Password is too weak.');
       } else {
-        Alert.alert('Error', 'Something went wrong. Try again later.');
+        showAlert('Error', 'Something went wrong. Try again later.');
         console.error(error);
       }
     } finally {
@@ -1189,8 +494,7 @@ const CreateAccountScreen: React.FC<Props> = ({navigation}) => {
       <KeyboardAvoidingView
         style={styles.keyboardAvoidingView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
-        >
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <ScrollView
             contentContainerStyle={[
@@ -1201,7 +505,6 @@ const CreateAccountScreen: React.FC<Props> = ({navigation}) => {
             bounces={false}
             keyboardShouldPersistTaps="handled">
             <View style={styles.formcontainer}>
-            
               <Text style={styles.title}>Create{'\n'}Account</Text>
 
               <View style={{width: '100%', alignItems: 'flex-start'}}>
@@ -1386,7 +689,12 @@ const CreateAccountScreen: React.FC<Props> = ({navigation}) => {
                 </Text>
               </View>
             </View>
-           
+            <CustomSizeAlert
+              visible={alertVisible}
+              title={alertTitle}
+              message={alertMessage}
+              onClose={() => setAlertVisible(false)}
+            />
           </ScrollView>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
@@ -1400,7 +708,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    position:'relative',
+    position: 'relative',
     zIndex: 0,
   },
   backgroundImage: {
@@ -1420,13 +728,13 @@ const styles = StyleSheet.create({
     // minHeight: screenHeight,
   },
   formcontainer: {
-    backgroundColor:'transparent',
+    backgroundColor: 'transparent',
     flexGrow: 1,
-    padding:14,
+    padding: 14,
     justifyContent: 'flex-start',
     // minHeight: screenHeight - 140,
   },
-  
+
   title: {
     fontSize: 36,
     fontWeight: 'bold',
@@ -1495,7 +803,6 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     height: 50,
     overflow: 'hidden',
-  
   },
   pickerNative: {
     width: 140,
@@ -1521,7 +828,7 @@ const styles = StyleSheet.create({
   strengthValue: {
     fontSize: 12,
     fontWeight: 'bold',
-   // marginLeft: 4,
+    // marginLeft: 4,
   },
   strengthBar: {
     height: 4,

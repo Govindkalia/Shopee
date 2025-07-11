@@ -18,6 +18,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {RootState} from '../store';
 import {RootStackParamList, TabParamList} from '../../App';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import CustomSizeAlert from '../components/alerts/customSizeAlert';
 
 type RouteParams = {
   PDP: {
@@ -63,14 +64,27 @@ const CategoryPDPScreen = () => {
       : item.id === product.id,
   );
 
+  const [showAlert, setShowAlert] = useState(false);
+
+  React.useEffect(() => {
+    if (!supportsSize && (category === 'Bags' || category === 'Watch')) {
+      setSelectedSize('One Size');
+    }
+  }, [category, supportsSize]);
+
   const handleWishlist = () => {
-    dispatch(addToWishlist(product));
+    const productWithSize = supportsSize
+      ? {...product, selectedSize: selectedSize || undefined}
+      : {...product, selectedSize: 'One Size'};
+
+    dispatch(addToWishlist(productWithSize));
+
     setWishlisted(!wishlisted);
   };
 
   const handleBuyNow = () => {
     if (supportsSize && !selectedSize) {
-      Alert.alert('Please select a size before buying.');
+      setShowAlert(true);
       return;
     }
     dispatch(addToCart({...product, selectedSize: selectedSize!, quantity: 1}));
@@ -112,37 +126,43 @@ const CategoryPDPScreen = () => {
           </View>
           <Text style={styles.description}>{product.description}</Text>
 
-          {supportsSize && allCategorySizes.length > 0 && (
+          {(supportsSize && allCategorySizes.length > 0) ||
+          (!supportsSize && selectedSize === 'One Size') ? (
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Size</Text>
               <View style={styles.sizeContainer}>
-                {allCategorySizes.map((size, index) => {
-                  const isAvailable = availableSizes.includes(size);
-                  const isSelected = selectedSize === size;
-
-                  return (
-                    <TouchableOpacity
-                      key={`${size}-${index}`}
-                      style={[
-                        styles.sizeBox,
-                        isSelected && styles.selectedSizeBox,
-                        !isAvailable && styles.disabledSizeBox,
-                      ]}
-                      onPress={() => isAvailable && setSelectedSize(size)}
-                      disabled={!isAvailable}>
-                      <Text
+                {supportsSize ? (
+                  allCategorySizes.map((size, index) => {
+                    const isAvailable = availableSizes.includes(size);
+                    const isSelected = selectedSize === size;
+                    return (
+                      <TouchableOpacity
+                        key={`${size}-${index}`}
                         style={[
-                          styles.sizeText,
-                          !isAvailable && styles.disabledSizeText,
-                        ]}>
-                        {size}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
+                          styles.sizeBox,
+                          isSelected && styles.selectedSizeBox,
+                          !isAvailable && styles.disabledSizeBox,
+                        ]}
+                        onPress={() => isAvailable && setSelectedSize(size)}
+                        disabled={!isAvailable}>
+                        <Text
+                          style={[
+                            styles.sizeText,
+                            !isAvailable && styles.disabledSizeText,
+                          ]}>
+                          {size}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })
+                ) : (
+                  <View style={[styles.sizeBox, styles.selectedSizeBox]}>
+                    <Text style={styles.sizeText}>One Size</Text>
+                  </View>
+                )}
               </View>
             </View>
-          )}
+          ) : null}
 
           {/* Specifications */}
           <View style={styles.section}>
@@ -207,7 +227,7 @@ const CategoryPDPScreen = () => {
           style={styles.cartButton}
           onPress={() => {
             if (supportsSize && !selectedSize) {
-              Alert.alert('Size Required', 'Please select a size.');
+              setShowAlert(true); // Show custom alert.
               return;
             }
             if (!isInCart) {
@@ -228,6 +248,13 @@ const CategoryPDPScreen = () => {
             {isInCart ? 'Go to Cart' : 'Add to Cart'}
           </Text>
         </TouchableOpacity>
+
+        <CustomSizeAlert
+          visible={showAlert}
+          title="Size Required"
+          message="Please select a size."
+          onClose={() => setShowAlert(false)}
+        />
 
         <TouchableOpacity style={styles.buyButton} onPress={handleBuyNow}>
           <Text style={styles.buyText}>Buy Now</Text>
