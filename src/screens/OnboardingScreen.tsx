@@ -63,7 +63,22 @@ const OnboardingScreen = ({navigation}: any) => {
         loop={false}
         showsPagination
         activeDotColor="#007BFF"
-        dotStyle={{backgroundColor: '#ccc'}}>
+        dotStyle={{
+          backgroundColor: '#ccc',
+          width: 8, // Increase width
+          height: 8, // Increase height
+          borderRadius: 6, // Make it circular
+          marginHorizontal: 4,
+          marginBottom: 20,
+        }}
+        activeDotStyle={{
+          backgroundColor: '#007BFF',
+          width: 12,
+          height: 12,
+          borderRadius: 7,
+          marginHorizontal: 4,
+          marginBottom: 20,
+        }}>
         {slides.map(slide => (
           <View style={styles.slide} key={slide.key}>
             <View style={styles.card}>
@@ -99,7 +114,7 @@ const styles = StyleSheet.create({
   },
   card: {
     width: width * 0.85,
-    height: height * 0.8,
+    height: height * 0.7,
     backgroundColor: '#fff',
     borderRadius: 20,
     paddingHorizontal: 20,
@@ -126,7 +141,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
     textAlign: 'center',
     color: '#555',
-    marginBottom: 80,
+    marginBottom: 20,
   },
   button: {
     backgroundColor: '#316bff',

@@ -101,7 +101,16 @@ const CategoryPDPScreen = () => {
           <TouchableOpacity
             onPress={() => navigation.goBack()}
             style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color="#316bff" />
+            <Ionicons name="arrow-back" size={30} color="#316bff" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.wishlistButton}
+            onPress={handleWishlist}>
+            <Ionicons
+              name={isWishlisted ? 'heart' : 'heart-outline'}
+              size={30}
+              color={isWishlisted ? 'red' : '#316bff'}
+            />
           </TouchableOpacity>
 
           {/* Swiper */}
@@ -148,6 +157,7 @@ const CategoryPDPScreen = () => {
                         <Text
                           style={[
                             styles.sizeText,
+                            isSelected && styles.selectedSizeText,
                             !isAvailable && styles.disabledSizeText,
                           ]}>
                           {size}
@@ -157,7 +167,9 @@ const CategoryPDPScreen = () => {
                   })
                 ) : (
                   <View style={[styles.sizeBox, styles.selectedSizeBox]}>
-                    <Text style={styles.sizeText}>One Size</Text>
+                    <Text style={[styles.sizeText, styles.selectedSizeText]}>
+                      One Size
+                    </Text>
                   </View>
                 )}
               </View>
@@ -215,14 +227,6 @@ const CategoryPDPScreen = () => {
 
       {/* Bottom Bar */}
       <View style={styles.bottomBar}>
-        <TouchableOpacity style={styles.iconButton} onPress={handleWishlist}>
-          <Ionicons
-            name={isWishlisted ? 'heart' : 'heart-outline'}
-            size={33}
-            color={isWishlisted ? 'red' : 'black'}
-          />
-        </TouchableOpacity>
-
         <TouchableOpacity
           style={styles.cartButton}
           onPress={() => {
@@ -271,7 +275,18 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 35,
     left: 18,
+    zIndex: 1,
+    opacity: 0.8,
+    backgroundColor: 'rgba(255,255,255,0.7)',
+    borderRadius: 20,
+    padding: 6,
+  },
+  wishlistButton: {
+    position: 'absolute',
+    top: 35,
+    right: 18,
     zIndex: 10,
+    opacity: 0.8,
     backgroundColor: 'rgba(255,255,255,0.7)',
     borderRadius: 20,
     padding: 6,
@@ -333,27 +348,34 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   sizeBox: {
-    paddingVertical: 10,
+    paddingVertical: 15,
     paddingHorizontal: 20,
-    backgroundColor: '#FAF4F4',
+    backgroundColor: '#fff',
+    borderColor: '#767676',
+    borderWidth: 1,
+    borderRadius: 15,
   },
   selectedSizeBox: {
     borderWidth: 1,
-    borderRadius: 4,
-    backgroundColor: '#e0f0ff',
-
-    borderColor: '#316bff',
+    borderRadius: 15,
+    backgroundColor: '#000',
+    borderColor: '#767676',
   },
   disabledSizeBox: {
-    backgroundColor: '#e0f0ff',
+    backgroundColor: '#ececec', //#e0f0ff
     borderColor: '#ddd',
-    borderRadius: 4,
+    borderRadius: 15,
   },
   sizeText: {
     fontSize: 14,
     fontWeight: 'bold',
     color: '#000',
   },
+
+  selectedSizeText: {
+    color: '#fff', // White text for selected size
+  },
+
   disabledSizeText: {
     color: '#aaa',
     textDecorationLine: 'line-through',
@@ -454,11 +476,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  iconButton: {
-    width: 44,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+  // iconButton: {
+  //   width: 44,
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  // },
+
   heart: {
     fontSize: 20,
     color: '#333',

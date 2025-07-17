@@ -231,6 +231,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../App';
 import {Product} from '../types/Product';
 import CustomSizeAlert from '../components/alerts/customSizeAlert';
+import ConfirmActionModal from '../components/alerts/confirmActionAlert';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -251,8 +252,22 @@ const WishlistScreen = () => {
   const [showSizeModal, setShowSizeModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
 
-  const handleRemove = (id: string) => dispatch(removeFromWishlist(id));
+  // const handleRemove = (id: string) => dispatch(removeFromWishlist(id));
+  const handleRemove = (id: string) => {
+    setItemToDelete(id);
+    setShowDeleteAlert(true);
+  };
+
+  const confirmDelete = () => {
+    if (itemToDelete) {
+      dispatch(removeFromWishlist(itemToDelete));
+      setItemToDelete(null);
+    }
+    setShowDeleteAlert(false);
+  };
 
   // const handleMoveToCart = (product: Product) => {
   //   const supportsSize = sizeSupportedCategories.includes(product.category);
@@ -324,7 +339,9 @@ const WishlistScreen = () => {
         <Image source={{uri: item.images[0]}} style={styles.image} />
       </View>
       <View style={styles.details}>
-        <Text style={styles.description}>{item.description}</Text>
+        <Text style={styles.description} numberOfLines={3} ellipsizeMode="tail">
+          {item.description}
+        </Text>
         <View style={styles.priceRow}>
           <Text style={styles.strikePrice}>${item.discounted_price}</Text>
           <Text style={styles.price}>${item.price}</Text>
@@ -334,7 +351,7 @@ const WishlistScreen = () => {
         onPress={() => handleRemove(item.id)}
         style={styles.iconLeft}>
         <View style={styles.iconCircle}>
-          <Ionicons name="trash-outline" size={18} color="red" />
+          <Ionicons name="trash-outline" size={25} color="red" />
         </View>
       </TouchableOpacity>
       <TouchableOpacity
@@ -342,6 +359,13 @@ const WishlistScreen = () => {
         style={styles.iconRight}>
         <Ionicons name="cart-outline" size={35} color="#316bff" />
       </TouchableOpacity>
+      <ConfirmActionModal
+        visible={showDeleteAlert}
+        title="Remove from Wishlist"
+        message="Are you sure you want to remove this item from your wishlist"
+        onCancel={() => setShowDeleteAlert(false)}
+        onConfirm={confirmDelete}
+      />
     </TouchableOpacity>
   );
 
@@ -470,6 +494,7 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 14,
     fontWeight: '500',
+    marginRight: 80,
   },
   priceRow: {
     flexDirection: 'row',
@@ -493,21 +518,21 @@ const styles = StyleSheet.create({
   },
   iconLeft: {
     position: 'absolute',
-    left: 8,
-    top: 80,
+    right: 12,
+    top: 20,
   },
   iconCircle: {
-    backgroundColor: 'white',
-    borderRadius: 15, // half of width/height to make it a circle
-    width: 30,
-    height: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 3, // for Android shadow
+    // backgroundColor: 'white',
+    // borderRadius: 15, // half of width/height to make it a circle
+    // width: 30,
+    // height: 30,
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    // shadowColor: '#000',
+    // shadowOffset: {width: 0, height: 2},
+    // shadowOpacity: 0.2,
+    // shadowRadius: 2,
+    // elevation: 3, // for Android shadow
   },
 
   iconRight: {
