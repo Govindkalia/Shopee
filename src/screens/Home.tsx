@@ -219,7 +219,7 @@ const Home = () => {
                   source={{uri: item.images?.[0]}}
                   style={styles.justForYouImage}
                 />
-                <Text style={styles.justForYouTitle}>${item.description}</Text>
+                <Text style={styles.justForYouTitle}>{item.description}</Text>
                 <Text style={styles.justForYouPrice}>
                   ${item.discounted_price}
                 </Text>
@@ -342,6 +342,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 10,
     marginRight: 12,
+    marginBottom: 10,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
@@ -373,6 +374,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 10,
     marginRight: 12,
+    marginBottom: 10,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
@@ -380,6 +382,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   popularItemImage: {
+    resizeMode: 'contain',
     width: '100%',
     height: 100,
     borderRadius: 8,
@@ -510,12 +513,14 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    overflow: 'hidden',
   },
 
   topProductImage: {
-    width: 60,
-    height: 60,
+    width: 70,
+    height: 70,
     borderRadius: 30,
+    resizeMode: 'contain',
   },
   justForYouGrid: {
     flexDirection: 'row',
@@ -523,11 +528,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   justForYouCard: {
-    width: screenWidth / 2 - 24,
+    width: screenWidth / 2 - 26,
     backgroundColor: '#fff',
     borderRadius: 10,
     padding: 10,
-    marginBottom: 16,
+    marginBottom: 14,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
@@ -537,6 +542,7 @@ const styles = StyleSheet.create({
   justForYouImage: {
     width: '100%',
     height: 100,
+    resizeMode: 'contain',
     borderRadius: 8,
   },
   justForYouTitle: {

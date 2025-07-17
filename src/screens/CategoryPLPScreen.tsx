@@ -122,11 +122,11 @@ const CategoryPLP = ({navigation}: any) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="#316bff" />
+          <Ionicons name="arrow-back" size={30} color="#316bff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{category}</Text>
         <TouchableOpacity onPress={() => setFilterModalVisible(true)}>
-          <Ionicons name="filter" size={24} color="#316bff" />
+          <Ionicons name="filter" size={30} color="#316bff" />
         </TouchableOpacity>
       </View>
 
@@ -159,14 +159,13 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 30,
+    padding: 22,
     paddingTop: 40,
-    paddingLeft: 18,
     backgroundColor: '#f8f8f8',
     justifyContent: 'space-between',
   },
   headerTitle: {
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: 'bold',
     textTransform: 'capitalize',
   },

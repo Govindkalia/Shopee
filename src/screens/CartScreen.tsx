@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -15,6 +15,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {RootStackParamList} from '../../App';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useNavigation} from '@react-navigation/native';
+import ConfirmActionModal from '../components/alerts/confirmActionAlert';
+import {SwipeListView} from 'react-native-swipe-list-view';
 const screenWidth = Dimensions.get('window').width;
 
 const sizeSupportedCategories = ['Shoes', 'Clothing', 'Hoodies', 'Lingerie'];
@@ -24,9 +26,25 @@ const CartScreen = () => {
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const dispatch = useDispatch();
   const cartItems = useSelector((state: RootState) => state.cart.items);
+  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<{
+    id: string;
+    selectedSize: string;
+  } | null>(null);
+  const [swipedRowKey, setSwipedRowKey] = useState<string | null>(null);
 
-  const handleRemove = (id: string, selectedSize: string) =>
-    dispatch(removeFromCart({id, selectedSize}));
+  const handleRemove = (id: string, selectedSize: string) => {
+    setItemToDelete({id, selectedSize});
+    setShowDeleteAlert(true);
+  };
+
+  const confirmDelete = () => {
+    if (itemToDelete) {
+      dispatch(removeFromCart(itemToDelete));
+      setItemToDelete(null);
+    }
+    setShowDeleteAlert(false);
+  };
 
   const handleQuantityChange = (
     id: string,
@@ -47,7 +65,7 @@ const CartScreen = () => {
         <Image source={{uri: item.images[0]}} style={styles.image} />
       </View>
       <View style={styles.details}>
-        <Text style={styles.description}>
+        <Text style={styles.description} numberOfLines={3} ellipsizeMode="tail">
           {item.description || 'Lorem ipsum dolor sit amet consectetur.'}
         </Text>
         <Text style={styles.size}>
@@ -91,10 +109,22 @@ const CartScreen = () => {
         onPress={() => handleRemove(item.id, item.selectedSize)}
         style={styles.iconLeft}>
         <View style={styles.iconCircle}>
-          <Ionicons name="trash-outline" size={18} color="red" />
+          <Ionicons name="trash-outline" size={25} color="red" />
         </View>
       </TouchableOpacity>
+      <ConfirmActionModal
+        visible={showDeleteAlert}
+        title="Confirm Removal"
+        message="Are you sure you want to remove this item from your cart?"
+        onCancel={() => setShowDeleteAlert(false)}
+        onConfirm={confirmDelete}
+      />
     </TouchableOpacity>
+  );
+  const renderHiddenItem = ({item}: any) => (
+    <View style={styles.rowBack}>
+      <Text style={styles.backTextWhite}>Delete</Text>
+    </View>
   );
 
   const total = cartItems.reduce(
@@ -115,10 +145,44 @@ const CartScreen = () => {
           />
         </View>
       ) : (
-        <FlatList
+        // <FlatList
+        //   data={cartItems}
+        //   keyExtractor={item => `${item.id}-${item.selectedSize}`}
+        //   renderItem={renderItem}
+        //   contentContainerStyle={styles.list}
+        // />
+        // <SwipeListView
+        //   data={cartItems}
+        //   keyExtractor={item => `${item.id}-${item.selectedSize}`}
+        //   renderItem={renderItem}
+        //   renderHiddenItem={renderHiddenItem}
+        //   rightOpenValue={-200}
+        //   disableRightSwipe
+        //   stopRightSwipe={-200}
+        //   onRowOpen={(rowKey, rowMap) => {
+        //     const [id, selectedSize] = rowKey.split('-');
+        //     setTimeout(() => {
+        //       dispatch(removeFromCart({id, selectedSize}));
+        //       rowMap[rowKey]?.closeRow();
+        //     }, 300);
+        //   }}
+        //   contentContainerStyle={styles.list}
+        // />
+
+        <SwipeListView
           data={cartItems}
           keyExtractor={item => `${item.id}-${item.selectedSize}`}
           renderItem={renderItem}
+          renderHiddenItem={renderHiddenItem}
+          rightOpenValue={-screenWidth / 2}
+          stopRightSwipe={-screenWidth}
+          disableRightSwipe
+          onRowDidOpen={(rowKey, rowMap) => {
+            // This is called only when the swipe is released and fully opened
+            const [id, selectedSize] = rowKey.split('-');
+            dispatch(removeFromCart({id, selectedSize}));
+            // rowMap[rowKey]?.closeRow();
+          }}
           contentContainerStyle={styles.list}
         />
       )}
@@ -133,9 +197,7 @@ const CartScreen = () => {
             styles.checkoutButton,
             total === 0 && styles.checkoutButtonDisabled,
           ]}
-          disabled={total === 0}
-          // onPress={() => navigation.navigate('Wishlist')}
-        >
+          disabled={total === 0}>
           <Text style={styles.checkoutText}>Checkout</Text>
         </TouchableOpacity>
       </View>
@@ -170,9 +232,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     // backgroundColor: '#fff',
     borderRadius: 8,
-    // paddingTop: 10,
-    // marginTop: 30,
-    // position: 'relative',
+    zIndex: 1,
+    backgroundColor: '#fff', // ensure it's opaque
   },
   imageContainer: {
     backgroundColor: '#fff',
@@ -186,10 +247,6 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   image: {
-    // width: 130,
-    // height: 110,
-    // borderRadius: 8,
-    // resizeMode: 'cover',
     height: 120,
     aspectRatio: 0.7,
     borderRadius: 8,
@@ -202,6 +259,7 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 14,
     fontWeight: '500',
+    marginRight: 80,
   },
   size: {
     marginTop: 4,
@@ -257,22 +315,10 @@ const styles = StyleSheet.create({
 
   iconLeft: {
     position: 'absolute',
-    left: 8,
-    top: 80,
+    right: 38,
+    top: 20,
   },
-  iconCircle: {
-    backgroundColor: 'white',
-    borderRadius: 15, // half of width/height to make it a circle
-    width: 30,
-    height: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 3, // for Android shadow
-  },
+  iconCircle: {},
   totalLabel: {
     fontSize: 18,
     fontWeight: 'bold',
@@ -326,6 +372,24 @@ const styles = StyleSheet.create({
     height: 200,
     resizeMode: 'contain',
     marginBottom: 20,
+  },
+  rowBack: {
+    position: 'absolute',
+    top: 0,
+    bottom: 10,
+    right: 0,
+    left: 0,
+    backgroundColor: 'red',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    flexDirection: 'row',
+    paddingRight: 20,
+    borderRadius: 8,
+  },
+
+  backTextWhite: {
+    color: '#FFF',
+    fontWeight: 'bold',
   },
 });
 
